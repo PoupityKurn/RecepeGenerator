@@ -1,14 +1,7 @@
 import pandas as pd
 import streamlit as st
 import boto3
-from utils import check_password
-
-
-# @st.cache_resource()
-def get_all_recipe(_dynamo_table):
-    response = _dynamo_table.scan(ProjectionExpression='#name_id', ExpressionAttributeNames={'#name_id': 'Name'})
-    recipes = [recipe["Name"] for recipe in response["Items"]]
-    return recipes
+from utils import check_password, get_all_recipe
 
 
 def get_recipe_details(table, recipe_name):
@@ -51,15 +44,16 @@ def add_new_recipe_and_remove_old_one(table, name, recipe_type, old_name, list_r
         else:
             response = table.put_item(Item={"Name": name, "Type": recipe_type, "Months": months})
 
-        if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+        response_delete = table.delete_item(Key={"Name": old_name})
+
+        if response["ResponseMetadata"]["HTTPStatusCode"] == 200 \
+                and response_delete["ResponseMetadata"]["HTTPStatusCode"] == 200:
             st.balloons()
             st.success(f"The recipe {old_name} has been modified and rename {name}.")
         else:
-            st.error("Hoops, something went wrong. Don't hesitate to send me the response written below:")
+            st.error("Hoops, something went wrong. Don't hesitate to send me the responses written below:")
             st.write(response)
-
-        response_delete = table.delete_item(Key={"Name": old_name})
-        st.write(response_delete)
+            st.write(response_delete)
 
 
 def ingredients_to_dataframe(ingredients):

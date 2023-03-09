@@ -28,3 +28,10 @@ def check_password():
     else:
         # Password correct.
         return True
+
+
+def get_all_recipe(_dynamo_table):
+    response = _dynamo_table.scan(ProjectionExpression='#name_id', ExpressionAttributeNames={'#name_id': 'Name'})
+    recipes = [recipe["Name"] for recipe in response["Items"]]
+    return recipes
+
