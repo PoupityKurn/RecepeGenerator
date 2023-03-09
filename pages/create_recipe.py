@@ -1,5 +1,6 @@
 import streamlit as st
 import boto3
+from utils import check_password
 
 
 def check_item_in_database(db_table, recipe_name):
@@ -31,17 +32,18 @@ def add_item(db_table, recipe_name, months):
 
 
 if __name__ == '__main__':
-    dynamo_client = boto3.resource(service_name='dynamodb', region_name='eu-west-3')
-    table = dynamo_client.Table("Recipe")
+    if check_password():
+        dynamo_client = boto3.resource(service_name='dynamodb', region_name='eu-west-3')
+        table = dynamo_client.Table("Recipe")
 
-    st.header("Add a recipe to the database")
-    name = st.text_input("Name: ")
+        st.header("Add a recipe to the database")
+        name = st.text_input("Name: ")
 
-    month = ["January", "February", "March", "April", "June", "July",
-             "August", "September", "October", "November", "December"]
-    month_selected = st.multiselect("Select the month for this recipe:", month)
-    month_index = [month.index(month_tmp) + 1 for month_tmp in month_selected]
-    if st.button("Click to add to the database"):
-        add_item(table, name, month_index)
+        month = ["January", "February", "March", "April", "June", "July",
+                 "August", "September", "October", "November", "December"]
+        month_selected = st.multiselect("Select the month for this recipe:", month)
+        month_index = [month.index(month_tmp) + 1 for month_tmp in month_selected]
+        if st.button("Click to add to the database"):
+            add_item(table, name, month_index)
 
 

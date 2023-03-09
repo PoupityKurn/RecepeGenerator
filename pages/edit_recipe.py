@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import boto3
-from boto3.dynamodb.conditions import Key, Attr
+from utils import check_password
 
 
 # @st.cache_resource()
@@ -113,10 +113,12 @@ def change_item(table, recipe, list_recipe):
 
 
 if __name__ == '__main__':
-    dynamo_client = boto3.resource(service_name='dynamodb', region_name='eu-west-3')
-    table = dynamo_client.Table("Recipe")
+    if check_password():
+        st.header("Use this page to edit a recipe")
+        dynamo_client = boto3.resource(service_name='dynamodb', region_name='eu-west-3')
+        table = dynamo_client.Table("Recipe")
 
-    list_recipe = get_all_recipe(table)
-    recipe_selected = st.sidebar.selectbox("Select a recipe to change: ", list_recipe)
-    recipe = get_recipe_details(table, recipe_selected)
-    change_item(table, recipe, list_recipe)
+        list_recipe = get_all_recipe(table)
+        recipe_selected = st.sidebar.selectbox("Select a recipe to change: ", list_recipe)
+        recipe = get_recipe_details(table, recipe_selected)
+        change_item(table, recipe, list_recipe)

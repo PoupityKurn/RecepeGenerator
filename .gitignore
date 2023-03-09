@@ -130,3 +130,6 @@ dmypy.json
 
 # Pycharm project settings
 .idea/
+
+# streamlit secrets, do not remove
+.streamlit/secrets.toml
