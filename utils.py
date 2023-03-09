@@ -35,3 +35,7 @@ def get_all_recipe(_dynamo_table):
     recipes = [recipe["Name"] for recipe in response["Items"]]
     return recipes
 
+def dataframe_to_ingredients(df):
+    ingredients_name = list(df.Ingredients.astype("str"))
+    quantity = list(df.Quantity.astype("str"))
+    return {ingredients_name[i]: quantity[i] for i in range(len(ingredients_name))}

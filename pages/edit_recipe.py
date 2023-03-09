@@ -1,7 +1,7 @@
 import pandas as pd
 import streamlit as st
 import boto3
-from utils import check_password, get_all_recipe
+from utils import check_password, get_all_recipe, dataframe_to_ingredients
 
 
 def get_recipe_details(table, recipe_name):
@@ -63,12 +63,6 @@ def ingredients_to_dataframe(ingredients):
         return pd.DataFrame({"Ingredients": [""], "Quantity": [""]})
 
 
-def dataframe_to_ingredients(df):
-    ingredients_name = list(df.Ingredients.astype("str"))
-    quantity = list(df.Quantity.astype("str"))
-    return {ingredients_name[i]: quantity[i] for i in range(len(ingredients_name))}
-
-
 def change_item(table, recipe, list_recipe):
     name = recipe["Name"]
     type_index = 0 if recipe["Type"] == "Main dish" else 1
@@ -98,12 +92,12 @@ def change_item(table, recipe, list_recipe):
             months_selected = [months_dict[month] for month in months]
             if not months_selected:
                 st.error("The recipe has not been edited. Please fill in the months for this recipe.")
-
-            if name_changed == name:
-                update_recipe(table, name_changed, recipe_type, months_selected, url, ingredients_changed)
             else:
-                add_new_recipe_and_remove_old_one(table, name_changed, recipe_type, name, list_recipe, months_selected,
-                                                  url, ingredients_changed)
+                if name_changed == name:
+                    update_recipe(table, name_changed, recipe_type, months_selected, url, ingredients_changed)
+                else:
+                    add_new_recipe_and_remove_old_one(table, name_changed, recipe_type, name, list_recipe,
+                                                      months_selected, url, ingredients_changed)
 
 
 if __name__ == '__main__':
