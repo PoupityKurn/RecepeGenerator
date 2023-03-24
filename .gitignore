@@ -133,3 +133,5 @@ dmypy.json
 
 # streamlit secrets, do not remove
 .streamlit/secrets.toml
+
+planning_saved.parquet
