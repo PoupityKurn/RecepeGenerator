@@ -74,11 +74,10 @@ def display_result_dataframe(df):
     return data
 
 
-def save_planning(data):
-    if st.button("Save this planning"):
-        data.to_parquet("planning_saved.parquet")
-        st.success("The file has been saved!")
-        logging.info("A user has saved the planning")
+@st.cache_data
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
 
 
 if __name__ == '__main__':
@@ -94,4 +93,5 @@ if __name__ == '__main__':
         df = display_dataframe_asking()
         data = display_result_dataframe(df)
 
-        save_planning(data)
+        csv = convert_df(data)
+        st.download_button(label="Download the table as CSV", data=csv, file_name="recipe_for_the_week.csv")
